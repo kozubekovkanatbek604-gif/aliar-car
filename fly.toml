@@ -1,0 +1,29 @@
+# Имя приложения на Fly — при импорте из GitHub можно заменить на своё (должно быть уникальным).
+app = "aliyar"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  ASPNETCORE_ENVIRONMENT = "Production"
+  ASPNETCORE_URLS = "http://0.0.0.0:8080"
+  # Fly проксирует HTTPS; без этого редиректы в production могут ломаться.
+  ASPNETCORE_FORWARDEDHEADERS_ENABLED = "true"
+
+# Постоянный диск для uploads/cars и uploads/managers (см. docker-entrypoint.sh).
+[mounts]
+  source = "aliyar_uploads"
+  destination = "/data/uploads"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
