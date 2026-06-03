@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("Default");
-if (string.IsNullOrWhiteSpace(connectionString))
+var connectionString = DatabaseConnection.Resolve(builder.Configuration);
+
+if (args.Contains("--db-migrate", StringComparer.OrdinalIgnoreCase))
 {
-    throw new InvalidOperationException(
-        "Не задана строка подключения. Укажите ConnectionStrings:Default в appsettings.json / appsettings.Production.json " +
-        "или переменную окружения ConnectionStrings__Default (например: Host=...;Database=...;Username=...;Password=...).");
+    await DbMigrationRunner.ApplyPendingMigrationsAsync(connectionString);
+    return;
 }
 
 // Add services to the container.
@@ -67,7 +67,9 @@ try
 }
 catch (Exception ex)
 {
+    Console.Error.WriteLine("Database migration or seed failed:");
     Console.Error.WriteLine(ex);
+    throw;
 }
 
 // Configure the HTTP request pipeline.
