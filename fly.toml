@@ -1,5 +1,5 @@
 # Имя приложения на Fly — при импорте из GitHub можно заменить на своё (должно быть уникальным).
-app = "aliyar"
+app = "aliar-car"
 primary_region = "ams"
 
 [build]
