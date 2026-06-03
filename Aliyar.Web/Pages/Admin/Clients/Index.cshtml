@@ -1,0 +1,55 @@
+@page
+@model Aliyar.Web.Pages.Admin.Clients.IndexModel
+@{
+    ViewData["Title"] = "Клиенты";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Клиенты</h1>
+        <p class="page-header__subtitle">Зарегистрированные клиенты</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="/Index">На главную</a>
+</header>
+
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+{
+    <div class="alert alert-success" role="alert">@Model.StatusMessage</div>
+}
+
+@if (Model.Clients.Count == 0)
+{
+    <div class="empty-state">Клиентов пока нет.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Логин</th>
+                    <th class="text-end">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var client in Model.Clients)
+            {
+                <tr>
+                    <td>@client.FullName</td>
+                    <td>@client.Login</td>
+                    <td class="text-end">
+                        <form method="post"
+                              asp-page-handler="Delete"
+                              onsubmit="return confirm('Удалить клиента @client.FullName? Это удалит и аккаунт входа.');"
+                              class="d-inline">
+                            <input type="hidden" name="clientId" value="@client.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

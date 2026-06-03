@@ -1,0 +1,117 @@
+@model Aliyar.Web.Data.CarCatalogFilter
+@{
+    var minYear = Model.MinYear ?? CarCatalogFilter.DefaultMinYear;
+    var maxYear = Model.MaxYear ?? CarCatalogFilter.DefaultMaxYear;
+    var minPrice = Model.MinPrice ?? CarCatalogFilter.DefaultMinPrice;
+    var maxPrice = Model.MaxPrice ?? CarCatalogFilter.DefaultMaxPrice;
+    var maxMileage = Model.MaxMileage ?? CarCatalogFilter.DefaultMaxMileage;
+    var bodyTypeFilter = Model.BodyTypeFilter ?? BodyType.Unknown;
+}
+
+<form method="get" class="card mb-4">
+    <div class="card-body">
+        <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Фильтры</h2>
+        <div class="row g-3 align-items-end">
+            <div class="col-6 col-md-2">
+                <label class="form-label" for="MinYear">Год от</label>
+                <select class="form-select" id="MinYear" name="MinYear">
+                    @foreach (var year in CarCatalogFilter.YearOptions())
+                    {
+                        if (year == minYear)
+                        {
+                            <option value="@year" selected>@year</option>
+                        }
+                        else
+                        {
+                            <option value="@year">@year</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label" for="MaxYear">Год до</label>
+                <select class="form-select" id="MaxYear" name="MaxYear">
+                    @foreach (var year in CarCatalogFilter.YearOptions())
+                    {
+                        if (year == maxYear)
+                        {
+                            <option value="@year" selected>@year</option>
+                        }
+                        else
+                        {
+                            <option value="@year">@year</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label" for="MinPrice">Цена от</label>
+                <select class="form-select" id="MinPrice" name="MinPrice">
+                    @foreach (var price in CarCatalogFilter.PriceOptions())
+                    {
+                        if (price == minPrice)
+                        {
+                            <option value="@price" selected>@price.ToString("N0")</option>
+                        }
+                        else
+                        {
+                            <option value="@price">@price.ToString("N0")</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label" for="MaxPrice">Цена до</label>
+                <select class="form-select" id="MaxPrice" name="MaxPrice">
+                    @foreach (var price in CarCatalogFilter.PriceOptions())
+                    {
+                        if (price == maxPrice)
+                        {
+                            <option value="@price" selected>@price.ToString("N0")</option>
+                        }
+                        else
+                        {
+                            <option value="@price">@price.ToString("N0")</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label" for="MaxMileage">Пробег до, км</label>
+                <select class="form-select" id="MaxMileage" name="MaxMileage">
+                    @foreach (var mileage in CarCatalogFilter.MileageOptions())
+                    {
+                        if (mileage == maxMileage)
+                        {
+                            <option value="@mileage" selected>@mileage.ToString("N0")</option>
+                        }
+                        else
+                        {
+                            <option value="@mileage">@mileage.ToString("N0")</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-2">
+                <label class="form-label" for="BodyTypeFilter">Тип кузова</label>
+                <select class="form-select" id="BodyTypeFilter" name="BodyTypeFilter">
+                    @foreach (var bodyType in BodyTypeCatalog.FilterOptions())
+                    {
+                        if (bodyType == bodyTypeFilter)
+                        {
+                            <option value="@((int)bodyType)" selected>@BodyTypeCatalog.GetFilterLabel(bodyType)</option>
+                        }
+                        else
+                        {
+                            <option value="@((int)bodyType)">@BodyTypeCatalog.GetFilterLabel(bodyType)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm">Применить</button>
+                <a class="btn btn-outline-secondary btn-sm" asp-page="@ViewData["FilterResetPage"]">Сбросить</a>
+            </div>
+        </div>
+    </div>
+</form>

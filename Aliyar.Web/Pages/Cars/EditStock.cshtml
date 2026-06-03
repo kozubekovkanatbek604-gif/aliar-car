@@ -1,0 +1,30 @@
+@page "{id:int}"
+@model Aliyar.Web.Pages.Cars.EditStockModel
+@{
+    ViewData["Title"] = "Количество на складе";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Количество на складе</h1>
+        <p class="page-header__subtitle">@Model.CarTitle</p>
+    </div>
+</header>
+
+<form method="post" class="card">
+    <div class="card-body">
+        <div class="mb-0">
+            <label asp-for="Car.StockQuantity" class="form-label"></label>
+            <input asp-for="Car.StockQuantity" class="form-control" type="number" min="0" max="9999" style="max-width: 200px;" />
+            <span asp-validation-for="Car.StockQuantity" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <a class="btn btn-outline-secondary" asp-page="Details" asp-route-id="@Model.Id">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

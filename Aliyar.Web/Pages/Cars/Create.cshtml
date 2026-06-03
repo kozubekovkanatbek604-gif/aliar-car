@@ -1,0 +1,26 @@
+@page
+@model Aliyar.Web.Pages.Cars.CreateModel
+@{
+    ViewData["Title"] = "Добавить авто";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Добавить авто</h1>
+        <p class="page-header__subtitle">Новая запись в каталоге салона</p>
+    </div>
+</header>
+
+<form method="post" class="card">
+    <div class="card-body">
+        <partial name="_CarForm" model="Model" />
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <a class="btn btn-outline-secondary" asp-page="Index">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

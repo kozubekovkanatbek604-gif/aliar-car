@@ -1,0 +1,136 @@
+@page
+@model Aliyar.Web.Pages.Admin.Managers.IndexModel
+@{
+    ViewData["Title"] = "Менеджеры";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Менеджеры</h1>
+        <p class="page-header__subtitle">Учётные записи с правом добавлять и редактировать автомобили</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="/Index">На главную</a>
+</header>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-info mb-4">@statusMessage</div>
+}
+
+<div class="row g-4">
+    <div class="col-12 col-lg-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Добавить менеджера</h2>
+                <form method="post" asp-page-handler="Create" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label"></label>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <hr class="my-4" />
+                    <h3 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Анкета менеджера</h3>
+                    <div class="mb-3">
+                        <label asp-for="Input.PassportNumber" class="form-label"></label>
+                        <input asp-for="Input.PassportNumber" class="form-control" />
+                        <span asp-validation-for="Input.PassportNumber" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Address" class="form-label"></label>
+                        <input asp-for="Input.Address" class="form-control" />
+                        <span asp-validation-for="Input.Address" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="tel" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label asp-for="Input.Age" class="form-label"></label>
+                            <input asp-for="Input.Age" class="form-control" />
+                            <span asp-validation-for="Input.Age" class="text-danger"></span>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <label asp-for="Input.Gender" class="form-label"></label>
+                            <select asp-for="Input.Gender" class="form-select">
+                                <option value="1">Мужской</option>
+                                <option value="2">Женский</option>
+                            </select>
+                            <span asp-validation-for="Input.Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label asp-for="Input.Photo" class="form-label"></label>
+                        <input asp-for="Input.Photo" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp" />
+                        <span asp-validation-for="Input.Photo" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </form>
+                <p class="form-text mt-3 mb-0">
+                    Если пользователь с таким email уже зарегистрирован, ему будет назначена роль менеджера (пароль не меняется).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Список менеджеров</h2>
+                @if (Model.Managers.Count == 0)
+                {
+                    <p class="text-muted mb-0">Менеджеров пока нет.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Телефон</th>
+                                    <th style="width: 1%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var manager in Model.Managers)
+                            {
+                                <tr>
+                                    <td>@manager.Email</td>
+                                    <td class="text-nowrap">@(string.IsNullOrEmpty(manager.PhoneNumber) ? "—" : manager.PhoneNumber)</td>
+                                    <td class="text-nowrap text-end">
+                                        <a class="btn btn-sm btn-outline-primary me-1"
+                                           asp-page="/Admin/Managers/Profile"
+                                           asp-route-userId="@manager.Id">Анкета</a>
+                                        <form method="post" asp-page-handler="Remove" class="d-inline"
+                                              onsubmit="return confirm('Снять роль менеджера с @manager.Email?');">
+                                            <input type="hidden" name="userId" value="@manager.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Снять роль</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

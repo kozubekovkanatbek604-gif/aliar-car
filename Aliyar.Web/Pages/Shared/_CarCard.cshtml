@@ -1,0 +1,67 @@
+@model Aliyar.Web.Pages.Shared.CarCardViewModel
+@using Aliyar.Web.Models
+@{
+    var car = Model.Car;
+    var title = $"{car.Make} {car.Model}";
+}
+
+<article class="vehicle-card">
+    <a class="vehicle-card__media" asp-page="/Cars/Details" asp-route-id="@car.Id" tabindex="-1" aria-hidden="true">
+        @if (!string.IsNullOrEmpty(Model.CoverPhotoUrl))
+        {
+            <img src="@Model.CoverPhotoUrl" alt="@title" loading="lazy" />
+        }
+        else
+        {
+            <div class="vehicle-card__placeholder" aria-hidden="true">
+                <span class="vehicle-card__placeholder-icon">🚗</span>
+            </div>
+        }
+        @if (Model.ShowStatus)
+        {
+            <span class="vehicle-card__badge @(car.IsOutOfStock() || car.IsSold || car.IsArchived ? "vehicle-card__badge--sold" : "vehicle-card__badge--available")">
+                @car.CatalogStatusLabel()
+            </span>
+        }
+    </a>
+    <div class="vehicle-card__body">
+        <h2 class="vehicle-card__title">
+            <a asp-page="/Cars/Details" asp-route-id="@car.Id">@car.Make @car.Model</a>
+        </h2>
+        <p class="vehicle-card__meta">@car.Year · @(car.Vin ?? "VIN не указан")</p>
+        <p class="vehicle-card__price">@MoneyFormat.Usd(car.Price)</p>
+        @if (car.IsStoreListing())
+        {
+            <p class="text-muted mb-2">@(car.IsOutOfStock() ? "В наличии нет" : $"На складе: {car.StockQuantity}")</p>
+        }
+        <div class="vehicle-card__actions">
+            <a class="btn btn-primary btn-sm" asp-page="/Cars/Details" asp-route-id="@car.Id">Подробнее</a>
+            @if (Model.ShowManageActions)
+            {
+                @if (car.IsCatalogAvailable())
+                {
+                    <a class="btn btn-outline-secondary btn-sm" asp-page="/Cars/Sell" asp-route-id="@car.Id">Продать</a>
+                }
+                <a class="btn btn-outline-secondary btn-sm" asp-page="/Cars/Edit" asp-route-id="@car.Id">Изменить</a>
+                <a class="btn btn-outline-secondary btn-sm" asp-page="/Cars/UploadPhoto" asp-route-id="@car.Id">Фото</a>
+                @if (User.IsAppAdmin() && !car.IsArchived)
+                {
+                    <form method="post" asp-page="/Cars/Index" asp-page-handler="Archive" class="d-inline"
+                          onsubmit="return confirm('Заархивировать автомобиль? Он исчезнет из каталога.');">
+                        <input type="hidden" name="id" value="@car.Id" />
+                        <button type="submit" class="btn btn-outline-warning btn-sm">В архив</button>
+                    </form>
+                    <a class="btn btn-outline-danger btn-sm" asp-page="/Cars/Delete" asp-route-id="@car.Id">Удалить</a>
+                }
+            }
+            @if (User.CanUseCart() && car.IsStoreListing() && car.IsCatalogAvailable())
+            {
+                <form method="post" asp-page="/Cart/Index" asp-page-handler="Add" class="d-inline">
+                    <input type="hidden" name="carId" value="@car.Id" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" class="btn btn-success btn-sm">В корзину</button>
+                </form>
+            }
+        </div>
+    </div>
+</article>

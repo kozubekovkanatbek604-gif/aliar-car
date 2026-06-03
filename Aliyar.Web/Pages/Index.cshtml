@@ -1,0 +1,85 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<section class="hero hero--home">
+    <div class="hero__inner">
+        <p class="hero__eyebrow">Автосалон и объявления</p>
+        <h1 class="display-hero">Найдите автомобиль мечты</h1>
+        <p class="lead-muted">Новые и проверенные авто в салоне, а также объявления от частных владельцев — всё в одном каталоге.</p>
+
+        <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" asp-page="/Cars/Index">Смотреть автосалон</a>
+            <a class="btn btn-hero-outline btn-lg" asp-page="/Listings/Index">Объявления</a>
+            @if (User.CanPostListings())
+            {
+                <a class="btn btn-hero-outline btn-lg" asp-page="/MyListings/Create">Продать своё авто</a>
+            }
+            else if (User.Identity?.IsAuthenticated != true)
+            {
+                <a class="btn btn-hero-outline btn-lg" asp-area="Identity" asp-page="/Account/RegisterClient">Стать продавцом</a>
+            }
+        </div>
+
+        <ul class="hero-stats" aria-label="Разделы каталога">
+            <li>
+                <span class="hero-stats__label">Автосалон</span>
+                <span class="hero-stats__hint">Авто в наличии</span>
+            </li>
+            <li>
+                <span class="hero-stats__label">Объявления</span>
+                <span class="hero-stats__hint">От клиентов</span>
+            </li>
+            <li>
+                <span class="hero-stats__label">Фото и VIN</span>
+                <span class="hero-stats__hint">Полные карточки</span>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section class="home-panels" aria-label="Быстрые действия">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="home-panel">
+                <h2 class="home-panel__title">Каталог</h2>
+                <p class="home-panel__text">Просмотр автомобилей салона и объявлений с фотографиями и ценами.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-primary" asp-page="/Cars/Index">Автосалон</a>
+                    <a class="btn btn-outline-primary" asp-page="/Listings/Index">Объявления</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="home-panel">
+                <h2 class="home-panel__title">Ваш аккаунт</h2>
+                <div class="quick-links d-grid gap-2">
+                    @if (User.CanPostListings())
+                    {
+                        <a class="btn btn-outline-secondary" asp-page="/MyListings/Index">Мои объявления</a>
+                        <a class="btn btn-outline-secondary" asp-page="/MyListings/Create">Разместить объявление</a>
+                    }
+                    @if (User.CanManageCars())
+                    {
+                        <a class="btn btn-outline-secondary" asp-page="/Cars/Create">Добавить авто в салон</a>
+                    }
+                    @if (User.IsAppAdmin())
+                    {
+                        <a class="btn btn-outline-secondary" asp-page="/Admin/Reports/Index">Отчёты по продажам</a>
+                    }
+                    @if (User.Identity?.IsAuthenticated != true)
+                    {
+                        <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/RegisterClient">Регистрация</a>
+                        <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Login">Вход</a>
+                    }
+                    @if (!User.IsAppAdmin())
+                    {
+                        <a class="btn btn-outline-secondary" asp-page="/About">О салоне</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,60 @@
+@page
+@model Aliyar.Web.Pages.Admin.Managers.ProfileModel
+@{
+    ViewData["Title"] = "Анкета менеджера";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Анкета менеджера</h1>
+        <p class="page-header__subtitle">@Model.Email</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-outline-secondary" asp-page="/Admin/Managers/Index">Назад</a>
+    </div>
+</header>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-info mb-4">@statusMessage</div>
+}
+
+@if (Model.Profile is null)
+{
+    <div class="alert alert-warning">Анкета не найдена.</div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <img src="@Model.PhotoUrl" alt="Фото менеджера" class="img-fluid rounded" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Паспорт</dt>
+                        <dd class="col-sm-8">@Model.Profile.PassportNumber</dd>
+
+                        <dt class="col-sm-4">Адрес</dt>
+                        <dd class="col-sm-8">@Model.Profile.Address</dd>
+
+                        <dt class="col-sm-4">Телефон</dt>
+                        <dd class="col-sm-8">@Model.Profile.PhoneNumber</dd>
+
+                        <dt class="col-sm-4">Возраст</dt>
+                        <dd class="col-sm-8">@Model.Profile.Age</dd>
+
+                        <dt class="col-sm-4">Пол</dt>
+                        <dd class="col-sm-8">@Model.GenderLabel</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

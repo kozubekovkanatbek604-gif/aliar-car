@@ -1,0 +1,26 @@
+@page
+@model Aliyar.Web.Pages.MyListings.CreateModel
+@{
+    ViewData["Title"] = "Новое объявление";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Разместить объявление</h1>
+        <p class="page-header__subtitle">Заполните данные об автомобиле</p>
+    </div>
+</header>
+
+<form method="post" class="card">
+    <div class="card-body">
+        <partial name="/Pages/Cars/_CarForm.cshtml" model="Model" />
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Опубликовать</button>
+        <a class="btn btn-outline-secondary" asp-page="Index">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

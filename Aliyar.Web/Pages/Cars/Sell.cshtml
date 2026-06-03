@@ -1,0 +1,57 @@
+@page "{id:int}"
+@model Aliyar.Web.Pages.Cars.SellModel
+@using Aliyar.Web.Models
+@{
+    ViewData["Title"] = "Продать авто";
+    var unitMargin = CarProfit.UnitMargin(Model.Car);
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Продать авто</h1>
+        <p class="page-header__subtitle">
+            <strong>@Model.Car.Make @Model.Car.Model</strong>, @Model.Car.Year — в каталоге: @MoneyFormat.Usd(Model.Car.Price)
+        </p>
+        <p class="page-header__subtitle mb-0">
+            Закупка: @MoneyFormat.Usd(Model.Car.PurchasePrice) · маржа при продаже по каталогу: @MoneyFormat.Usd(unitMargin) · на складе: @Model.Car.StockQuantity
+        </p>
+    </div>
+</header>
+
+<form method="post" class="card col-12 col-md-7 col-lg-6">
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Sale.ClientId" class="form-label"></label>
+            <select asp-for="Sale.ClientId" asp-items="Model.ClientOptions" class="form-select">
+                <option value="">— выберите клиента —</option>
+            </select>
+            <span asp-validation-for="Sale.ClientId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Sale.PaymentMethod" class="form-label"></label>
+            <select asp-for="Sale.PaymentMethod" class="form-select">
+                <option value="0">Наличка</option>
+                <option value="1">Карта</option>
+                <option value="2">QR</option>
+            </select>
+            <span asp-validation-for="Sale.PaymentMethod" class="text-danger"></span>
+        </div>
+
+        <div class="mb-0">
+            <label asp-for="Sale.SalePrice" class="form-label"></label>
+            <input asp-for="Sale.SalePrice" class="form-control" step="1" />
+            <span asp-validation-for="Sale.SalePrice" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <button type="submit" class="btn btn-success">Оформить продажу</button>
+        <a class="btn btn-outline-secondary" asp-page="Details" asp-route-id="@Model.Car.Id">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

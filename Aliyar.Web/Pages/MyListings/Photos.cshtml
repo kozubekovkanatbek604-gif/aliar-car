@@ -1,0 +1,94 @@
+@page "{id:int}"
+@model Aliyar.Web.Pages.MyListings.PhotosModel
+@using Aliyar.Web.Services
+@{
+    ViewData["Title"] = "Фото объявления";
+    var canAddMore = Model.ExistingPhotos.Count < CarPhotoStorage.MaxPhotosPerCar;
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Фото объявления</h1>
+        <p class="page-header__subtitle">@Model.Car.Make @Model.Car.Model (@Model.Car.Year)</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-outline-secondary" asp-page="/Cars/Details" asp-route-id="@Model.Car.Id">Назад</a>
+    </div>
+</header>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-success mb-4">@statusMessage</div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Текущие фото</span>
+                <span class="text-muted">@Model.ExistingPhotos.Count / @CarPhotoStorage.MaxPhotosPerCar</span>
+            </div>
+            <div class="card-body">
+                @if (Model.ExistingPhotos.Count == 0)
+                {
+                    <div class="empty-state">Пока нет фото. Добавьте первое.</div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @foreach (var photo in Model.ExistingPhotos)
+                        {
+                            <div class="col-6 col-md-4">
+                                <div class="border rounded p-2 h-100 d-flex flex-column gap-2">
+                                    <img class="img-fluid rounded"
+                                         src="@CarPhotoStorage.ToPublicUrl(photo.Path)"
+                                         alt="Фото @Model.Car.Make @Model.Car.Model" />
+                                    <form method="post"
+                                          asp-page-handler="Delete"
+                                          asp-route-id="@Model.Id"
+                                          asp-route-photoId="@photo.Id">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Удалить</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        @if (canAddMore)
+        {
+            <form method="post" enctype="multipart/form-data" class="card">
+                <div class="card-header">Добавить фото</div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <label class="form-label" asp-for="NewPhotos">Файлы</label>
+                        <input class="form-control" asp-for="NewPhotos" type="file" multiple accept="image/*" />
+                        <span class="text-danger small" asp-validation-for="NewPhotos"></span>
+                    </div>
+                    <div class="text-muted small">
+                        JPG, PNG или WEBP, до 5 МБ каждый. За раз — до @CarPhotoStorage.MaxFilesPerUpload файлов,
+                        всего — до @CarPhotoStorage.MaxPhotosPerCar.
+                    </div>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <button class="btn btn-primary" type="submit">Загрузить</button>
+                    <a class="btn btn-outline-secondary" asp-page="/Cars/Details" asp-route-id="@Model.Car.Id">Готово</a>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                Достигнут лимит (@CarPhotoStorage.MaxPhotosPerCar фото). Удалите лишние, чтобы загрузить новые.
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

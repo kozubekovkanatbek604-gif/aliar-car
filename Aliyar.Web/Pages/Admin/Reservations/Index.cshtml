@@ -1,0 +1,66 @@
+@page
+@model Aliyar.Web.Pages.Admin.Reservations.IndexModel
+@{
+    ViewData["Title"] = "Брони";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Брони</h1>
+        <p class="page-header__subtitle">Забронированные автомобили</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="/Index">На главную</a>
+</header>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-info mb-4">@statusMessage</div>
+}
+
+<div class="card">
+    <div class="card-body">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="text-muted mb-0">Активных броней нет.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Авто</th>
+                        <th>Клиент</th>
+                        <th>Телефон</th>
+                        <th>Кол-во</th>
+                        <th>До</th>
+                        <th style="width: 1%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var x in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-page="/Cars/Details" asp-route-id="@x.CarId">@x.CarTitle</a>
+                            </td>
+                            <td class="text-nowrap">@x.CustomerName</td>
+                            <td class="text-nowrap">@x.CustomerPhone</td>
+                            <td class="text-nowrap">@x.Quantity</td>
+                            <td class="text-nowrap">@x.ReservedUntilLocal</td>
+                            <td class="text-nowrap text-end">
+                                <form method="post" asp-page-handler="Cancel" class="d-inline"
+                                      onsubmit="return confirm('Отменить бронь?');">
+                                    <input type="hidden" name="reservationId" value="@x.ReservationId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Отменить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+

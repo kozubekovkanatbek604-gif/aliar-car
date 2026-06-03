@@ -1,0 +1,65 @@
+@page
+@model Aliyar.Web.Pages.Admin.ArchivedCars.IndexModel
+@{
+    ViewData["Title"] = "Архив";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Архив</h1>
+        <p class="page-header__subtitle">Заархивированные автомобили и объявления</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="/Cars/Index">К автосалону</a>
+</header>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-success mb-4">@statusMessage</div>
+}
+
+<div class="card">
+    <div class="card-body">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="text-muted mb-0">В архиве пока ничего нет.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Тип</th>
+                        <th>Авто</th>
+                        <th>Год</th>
+                        <th class="text-end">Цена</th>
+                        <th>Архивировано</th>
+                        <th style="width: 1%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var x in Model.Items)
+                    {
+                        <tr>
+                            <td class="text-nowrap">@x.KindLabel</td>
+                            <td>
+                                <a asp-page="/Cars/Details" asp-route-id="@x.CarId">@x.Make @x.Model</a>
+                            </td>
+                            <td class="text-nowrap">@x.Year</td>
+                            <td class="text-end text-nowrap">@MoneyFormat.Usd(x.Price)</td>
+                            <td class="text-nowrap">@x.ArchivedAtLocal</td>
+                            <td class="text-nowrap text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="/Cars/Details" asp-route-id="@x.CarId">Открыть</a>
+                                <form method="post" asp-page-handler="Restore" class="d-inline">
+                                    <input type="hidden" name="id" value="@x.CarId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Восстановить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

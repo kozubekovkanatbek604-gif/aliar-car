@@ -1,0 +1,132 @@
+@page "{carId:int}"
+@model Aliyar.Web.Pages.Cars.Specifications.IndexModel
+@using Aliyar.Web.Models
+@{
+    ViewData["Title"] = "Технические характеристики";
+    var spec = Model.Specification;
+    var backPage = Model.Car.IsCustomerListing() ? "/Listings/Index" : "/Cars/Index";
+    var backLabel = Model.Car.IsCustomerListing() ? "К объявлениям" : "К автосалону";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Технические характеристики</h1>
+        <p class="page-header__subtitle">@Model.Car.Make @Model.Car.Model · @Model.Car.Year</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        @if (User.CanEditCarSpecifications(Model.Car))
+        {
+            <a class="btn btn-outline-primary btn-sm" asp-page="Edit" asp-route-carId="@Model.CarId">Изменить</a>
+        }
+        <a class="btn btn-outline-secondary btn-sm" asp-page="/Cars/Details" asp-route-id="@Model.CarId">К карточке</a>
+    </div>
+</header>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-success mb-4">@statusMessage</div>
+}
+
+@if (spec is null)
+{
+    <div class="alert alert-warning">
+        Характеристики ещё не заполнены.
+        @if (User.CanEditCarSpecifications(Model.Car))
+        {
+            <a asp-page="Edit" asp-route-carId="@Model.CarId">Заполнить</a>
+        }
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Базовые характеристики</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Марка и модель</dt>
+                        <dd class="col-sm-7">@Model.Car.Make @Model.Car.Model</dd>
+                        <dt class="col-sm-5">Год выпуска</dt>
+                        <dd class="col-sm-7">@Model.Car.Year</dd>
+                        <dt class="col-sm-5">Тип кузова</dt>
+                        <dd class="col-sm-7">@spec.BodyType.ToDisplayName()</dd>
+                        <dt class="col-sm-5">Пробег</dt>
+                        <dd class="col-sm-7">@spec.Mileage.ToString("N0") км</dd>
+                        <dt class="col-sm-5">Цвет</dt>
+                        <dd class="col-sm-7">@(string.IsNullOrWhiteSpace(spec.Color) ? "—" : spec.Color)</dd>
+                        <dt class="col-sm-5">Двери / места</dt>
+                        <dd class="col-sm-7">@(spec.Doors?.ToString() ?? "—") / @(spec.Seats?.ToString() ?? "—")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Технические параметры</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Двигатель</dt>
+                        <dd class="col-sm-7">
+                            @(spec.EngineVolumeLiters?.ToString("0.0") ?? "—") л,
+                            @(spec.EnginePowerHp?.ToString() ?? "—") л.с.,
+                            @spec.EngineType.ToDisplayName()
+                        </dd>
+                        <dt class="col-sm-5">Коробка передач</dt>
+                        <dd class="col-sm-7">@spec.Transmission.ToDisplayName()</dd>
+                        <dt class="col-sm-5">Привод</dt>
+                        <dd class="col-sm-7">@spec.Drive.ToDisplayName()</dd>
+                        <dt class="col-sm-5">Расход топлива</dt>
+                        <dd class="col-sm-7">@(spec.FuelConsumptionL100Km?.ToString("0.0") ?? "—") л/100 км</dd>
+                        <dt class="col-sm-5">Экокласс</dt>
+                        <dd class="col-sm-7">@(spec.EmissionClass ?? "—")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Безопасность и комфорт</h2>
+                    <ul class="mb-0">
+                        @if (spec.HasAbs) { <li>ABS</li> }
+                        @if (spec.HasEsp) { <li>ESP</li> }
+                        @if (spec.HasAirbags) { <li>Подушки безопасности</li> }
+                        @if (spec.HasAirConditioning) { <li>Кондиционер</li> }
+                        @if (spec.HasClimateControl) { <li>Климат-контроль</li> }
+                        @if (spec.HasBluetooth) { <li>Bluetooth</li> }
+                        @if (spec.HasUsb) { <li>USB</li> }
+                        @if (spec.HasNavigation) { <li>Навигация</li> }
+                        @if (spec.HasParkingSensors) { <li>Парктроник</li> }
+                        @if (spec.HasRearCamera) { <li>Камера заднего вида</li> }
+                        @if (!spec.HasAbs && !spec.HasEsp && !spec.HasAirbags && !spec.HasAirConditioning
+                             && !spec.HasClimateControl && !spec.HasBluetooth && !spec.HasUsb
+                             && !spec.HasNavigation && !spec.HasParkingSensors && !spec.HasRearCamera)
+                        {
+                            <li class="text-muted">Не указано</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Дополнительно</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">VIN</dt>
+                        <dd class="col-sm-7">@(Model.Car.Vin ?? "—")</dd>
+                        <dt class="col-sm-5">Документы</dt>
+                        <dd class="col-sm-7">@(spec.Documents ?? "—")</dd>
+                        <dt class="col-sm-5">Владельцы</dt>
+                        <dd class="col-sm-7">@(spec.OwnerCount?.ToString() ?? "—")</dd>
+                        <dt class="col-sm-5">Состояние</dt>
+                        <dd class="col-sm-7">@(spec.Condition ?? "—")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<a class="btn btn-outline-secondary mt-4" asp-page="@backPage">@backLabel</a>

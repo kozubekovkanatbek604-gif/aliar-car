@@ -1,0 +1,37 @@
+@model Aliyar.Web.Pages.Cars.ICarFormModel
+
+<div class="row g-3">
+    <div class="col-12 col-md-6">
+        <label class="form-label">Марка</label>
+        <input class="form-control" asp-for="Car.Make" />
+        <span class="text-danger" asp-validation-for="Car.Make"></span>
+    </div>
+    <div class="col-12 col-md-6">
+        <label class="form-label">Модель</label>
+        <input class="form-control" asp-for="Car.Model" />
+        <span class="text-danger" asp-validation-for="Car.Model"></span>
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="form-label">Год</label>
+        <input class="form-control" asp-for="Car.Year" />
+        <span class="text-danger" asp-validation-for="Car.Year"></span>
+    </div>
+    <div class="col-12 col-md-4">
+        <label class="form-label">Цена</label>
+        <input class="form-control" asp-for="Car.Price" step="1" />
+        <span class="text-danger" asp-validation-for="Car.Price"></span>
+    </div>
+    @if (Model.ShowPurchasePrice)
+    {
+        <div class="col-12 col-md-4">
+            <label class="form-label" asp-for="Car.PurchasePrice"></label>
+            <input class="form-control" asp-for="Car.PurchasePrice" step="1" />
+            <span class="text-danger" asp-validation-for="Car.PurchasePrice"></span>
+        </div>
+    }
+    <div class="col-12 col-md-4">
+        <label class="form-label">VIN <span class="text-muted fw-normal">(необязательно)</span></label>
+        <input class="form-control" asp-for="Car.Vin" />
+        <span class="text-danger" asp-validation-for="Car.Vin"></span>
+    </div>
+</div>

@@ -1,0 +1,97 @@
+## Сборка .NET
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild[Ll]og.*
+*.dll
+*.exe
+*.pdb
+*.cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+## Visual Studio / Rider
+.vs/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+.idea/
+*.DotSettings.user
+
+## VS Code (локальные настройки; launch/tasks можно хранить в репозитории)
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+## Конфигурация с секретами (локальные переопределения)
+appsettings.Development.json
+appsettings.*.local.json
+appsettings.Production.json
+secrets.json
+
+## User Secrets (ASP.NET Core)
+**/Properties/launchSettings.json.user
+
+## Загруженные пользователем файлы
+**/wwwroot/uploads/
+
+## Тесты и покрытие
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+coverage*.json
+coverage*.xml
+*.coverage
+*.coveragexml
+
+## Публикация
+publish/
+*.pubxml
+*.publishproj
+
+## EF / базы (локальные файлы SQLite и т.п.)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+
+## ОС
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Прочее
+*.log
+*.tmp
+*.temp
+*.swp
+*~
+.env
+.env.*

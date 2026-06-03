@@ -1,0 +1,32 @@
+@page "{carId:int}"
+@model Aliyar.Web.Pages.Cars.Specifications.EditModel
+@{
+    ViewData["Title"] = "Технические характеристики";
+    ViewData["IsRequiredForClient"] = Model.IsRequiredForClient;
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Технические характеристики</h1>
+        <p class="page-header__subtitle">@Model.Car.Make @Model.Car.Model · @Model.Car.Year</p>
+    </div>
+</header>
+
+<form method="post" class="card">
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <partial name="_SpecificationForm" model="Model.Input" />
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        @if (Model.Car.Specification is not null)
+        {
+            <a class="btn btn-outline-secondary" asp-page="Index" asp-route-carId="@Model.CarId">Просмотр</a>
+        }
+        <a class="btn btn-outline-secondary" asp-page="/Cars/Details" asp-route-id="@Model.CarId">К карточке</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

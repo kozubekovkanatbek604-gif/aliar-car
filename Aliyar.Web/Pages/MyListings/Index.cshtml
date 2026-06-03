@@ -1,0 +1,137 @@
+@page
+@model Aliyar.Web.Pages.MyListings.IndexModel
+@{
+    ViewData["Title"] = "Мои объявления";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Мои объявления</h1>
+        <p class="page-header__subtitle">Управление вашими объявлениями</p>
+    </div>
+    <a class="btn btn-primary" asp-page="Create">Добавить</a>
+</header>
+
+@if (TempData["StatusMessage"] is string statusMessage)
+{
+    <div class="alert alert-success mb-4">@statusMessage</div>
+}
+
+@if (Model.Listings.Count == 0 && Model.ArchivedListings.Count == 0)
+{
+    <div class="empty-state">У вас пока нет объявлений.</div>
+}
+else
+{
+    @if (Model.Listings.Count > 0)
+    {
+        <div class="table-responsive mb-4">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Марка</th>
+                        <th>Модель</th>
+                        <th>Год</th>
+                        <th class="text-end">Цена</th>
+                        <th>Статус</th>
+                        <th>Характеристики</th>
+                        <th style="width: 1%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Listings)
+                {
+                    var car = item.Car;
+                    <tr>
+                        <td>@car.Make</td>
+                        <td>@car.Model</td>
+                        <td>@car.Year</td>
+                        <td class="text-end">@MoneyFormat.Usd(car.Price)</td>
+                        <td>
+                            @if (car.IsSold)
+                            {
+                                <span class="badge text-bg-secondary">Продан</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-success">В продаже</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.HasCompleteSpecifications)
+                            {
+                                <span class="badge text-bg-success">Заполнены</span>
+                            }
+                            else if (!car.IsSold)
+                            {
+                                <span class="badge text-bg-warning">Нужно заполнить</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td class="text-nowrap text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-page="/Cars/Details" asp-route-id="@car.Id">Открыть</a>
+                            @if (!car.IsSold)
+                            {
+                                <a class="btn btn-sm btn-outline-primary" asp-page="/Cars/Specifications/Edit" asp-route-carId="@car.Id">Характеристики</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="Photos" asp-route-id="@car.Id">Фото</a>
+                                <a class="btn btn-sm btn-outline-primary" asp-page="Edit" asp-route-id="@car.Id">Изменить</a>
+                                <form class="d-inline" method="post" asp-page-handler="MarkSold" asp-route-id="@car.Id">
+                                    <button type="submit" class="btn btn-sm btn-success">Продано</button>
+                                </form>
+                                <form class="d-inline" method="post" asp-page-handler="Archive" asp-route-id="@car.Id"
+                                      onsubmit="return confirm('Заархивировать объявление? Оно исчезнет из каталога.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-warning">В архив</button>
+                                </form>
+                                <a class="btn btn-sm btn-outline-danger" asp-page="Delete" asp-route-id="@car.Id">Удалить</a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.ArchivedListings.Count > 0)
+    {
+        <h2 class="h5 mb-3">В архиве</h2>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Марка</th>
+                        <th>Модель</th>
+                        <th>Год</th>
+                        <th class="text-end">Цена</th>
+                        <th>Архивировано</th>
+                        <th style="width: 1%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.ArchivedListings)
+                {
+                    var car = item.Car;
+                    <tr>
+                        <td>@car.Make</td>
+                        <td>@car.Model</td>
+                        <td>@car.Year</td>
+                        <td class="text-end">@MoneyFormat.Usd(car.Price)</td>
+                        <td class="text-nowrap">
+                            @(car.ArchivedAtUtc?.ToLocalTime().ToString("g") ?? "—")
+                        </td>
+                        <td class="text-nowrap text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-page="/Cars/Details" asp-route-id="@car.Id">Открыть</a>
+                            <form class="d-inline" method="post" asp-page-handler="Restore" asp-route-id="@car.Id">
+                                <button type="submit" class="btn btn-sm btn-outline-success">Восстановить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}

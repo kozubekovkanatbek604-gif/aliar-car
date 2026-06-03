@@ -1,0 +1,25 @@
+@page "{id:int}"
+@model Aliyar.Web.Pages.Cars.EditModel
+@{
+    ViewData["Title"] = "Редактировать авто";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Редактировать авто</h1>
+    </div>
+</header>
+
+<form method="post" class="card">
+    <div class="card-body">
+        <partial name="_CarForm" model="Model" />
+    </div>
+    <div class="card-footer d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <a class="btn btn-outline-secondary" asp-page="Details" asp-route-id="@Model.Id">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

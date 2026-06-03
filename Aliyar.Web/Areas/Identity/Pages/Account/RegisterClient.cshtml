@@ -1,0 +1,46 @@
+@page
+@model Aliyar.Web.Areas.Identity.Pages.Account.RegisterClientModel
+@{
+    ViewData["Title"] = "Регистрация клиента";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Регистрация клиента</h1>
+        <p class="page-header__subtitle">Укажите ФИО, логин и пароль для входа в личный кабинет</p>
+    </div>
+</header>
+
+<form id="registerClientForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="card auth-form">
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+        <div class="mb-3">
+            <label asp-for="Input.FullName" class="form-label"></label>
+            <input asp-for="Input.FullName" class="form-control" autocomplete="name" />
+            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Input.Login" class="form-label"></label>
+            <input asp-for="Input.Login" class="form-control" autocomplete="username" />
+            <span asp-validation-for="Input.Login" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Input.Password" class="form-label"></label>
+            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" />
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+        <div class="mb-0">
+            <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="card-footer d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+        <a class="btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Login">Уже есть аккаунт</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

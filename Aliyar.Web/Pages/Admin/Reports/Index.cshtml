@@ -1,0 +1,111 @@
+@page
+@model Aliyar.Web.Pages.Admin.Reports.IndexModel
+@{
+    ViewData["Title"] = "Отчёты";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Отчёты</h1>
+        <p class="page-header__subtitle">Продажи автомобилей</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-page="Payments">По оплатам</a>
+        <a class="btn btn-outline-secondary" asp-page="/Index">На главную</a>
+    </div>
+</header>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-warning mb-4">@Model.ErrorMessage</div>
+}
+else
+{
+    <form method="get" class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Менеджер</label>
+                    <select class="form-select" name="ManagerUserId">
+                        <option value="" selected="@(string.IsNullOrEmpty(Model.ManagerUserId))">Все</option>
+                        <option value="__none__" selected="@(Model.ManagerUserId == "__none__")">Без менеджера</option>
+                        @foreach (var m in Model.Managers)
+                        {
+                            <option value="@m.UserId" selected="@(Model.ManagerUserId == m.UserId)">@m.Label</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label">С даты</label>
+                    <input type="date" class="form-control" name="DateFrom" value="@(Model.DateFrom?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label">По дату</label>
+                    <input type="date" class="form-control" name="DateTo" value="@(Model.DateTo?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-12 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Фильтр</button>
+                    <a class="btn btn-outline-secondary w-100" asp-page="Index">Сброс</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat-card">
+                <div class="stat-card__label">Всего продаж</div>
+                <div class="stat-card__value">@Model.TotalSales</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat-card">
+                <div class="stat-card__label">Выручка</div>
+                <div class="stat-card__value">@MoneyFormat.Usd(Model.TotalRevenue)</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat-card">
+                <div class="stat-card__label">Чистая прибыль</div>
+                <div class="stat-card__value text-success">@MoneyFormat.Usd(Model.TotalProfit)</div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Rows.Count == 0)
+    {
+        <div class="empty-state">Продаж пока нет.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Автомобиль</th>
+                        <th>Клиент</th>
+                        <th>Оплата</th>
+                        <th class="text-end">Сумма</th>
+                        <th class="text-end">Прибыль</th>
+                        <th>Менеджер</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td class="text-nowrap">@row.SoldAtUtc.ToLocalTime().ToString("g")</td>
+                        <td>@row.CarTitle</td>
+                        <td>@row.CustomerName</td>
+                        <td>@row.PaymentMethod.ToDisplayNameRu()</td>
+                        <td class="text-end">@MoneyFormat.Usd(row.SalePrice)</td>
+                        <td class="text-end text-success">@MoneyFormat.Usd(row.NetProfit)</td>
+                        <td class="text-muted">@row.SoldBy</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}

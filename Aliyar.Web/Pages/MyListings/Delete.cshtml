@@ -1,0 +1,21 @@
+@page "{id:int}"
+@model Aliyar.Web.Pages.MyListings.DeleteModel
+@{
+    ViewData["Title"] = "Удалить объявление";
+}
+
+<header class="page-header">
+    <div>
+        <h1 class="page-header__title">Удалить объявление?</h1>
+        <p class="page-header__subtitle">@Model.Car.Make @Model.Car.Model (@Model.Car.Year)</p>
+    </div>
+</header>
+
+<div class="alert alert-danger mb-4">
+    Объявление будет удалено без возможности восстановления.
+</div>
+
+<form method="post" class="d-flex gap-2">
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a class="btn btn-outline-secondary" asp-page="Index">Отмена</a>
+</form>

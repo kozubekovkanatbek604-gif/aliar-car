@@ -1,0 +1,136 @@
+@model Aliyar.Web.Pages.Cars.Specifications.SpecificationInputModel
+
+@if (ViewData["IsRequiredForClient"] as bool? == true)
+{
+    <div class="alert alert-info mb-4">
+        Заполните обязательные поля (тип кузова, пробег, цвет, двигатель, коробка, привод).
+        Остальные поля необязательны — чем больше данных, тем выше доверие покупателей.
+    </div>
+}
+else
+{
+    <div class="alert alert-secondary mb-4">
+        Все поля необязательны. Чем больше данных — тем выше доверие покупателей.
+    </div>
+}
+
+<div class="mb-4">
+    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Базовые характеристики</h2>
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <label asp-for="BodyType" class="form-label"></label>
+            <select asp-for="BodyType" class="form-select">
+                @foreach (var bodyType in BodyTypeCatalog.SelectableTypes())
+                {
+                    if (Model.BodyType == bodyType)
+                    {
+                        <option value="@((int)bodyType)" selected>@bodyType.ToDisplayName()</option>
+                    }
+                    else
+                    {
+                        <option value="@((int)bodyType)">@bodyType.ToDisplayName()</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="BodyType" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-6">
+            <label asp-for="Mileage" class="form-label"></label>
+            <input asp-for="Mileage" class="form-control" type="number" min="0" />
+            <span asp-validation-for="Mileage" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-6">
+            <label asp-for="Color" class="form-label"></label>
+            <input asp-for="Color" class="form-control" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-3">
+            <label asp-for="Doors" class="form-label"></label>
+            <input asp-for="Doors" class="form-control" type="number" min="2" max="7" />
+            <span asp-validation-for="Doors" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-3">
+            <label asp-for="Seats" class="form-label"></label>
+            <input asp-for="Seats" class="form-control" type="number" min="2" max="9" />
+            <span asp-validation-for="Seats" class="text-danger"></span>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Технические параметры</h2>
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <label asp-for="EngineVolumeLiters" class="form-label"></label>
+            <input asp-for="EngineVolumeLiters" class="form-control" type="number" step="0.1" min="0" />
+            <span asp-validation-for="EngineVolumeLiters" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="EnginePowerHp" class="form-label"></label>
+            <input asp-for="EnginePowerHp" class="form-control" type="number" min="0" />
+            <span asp-validation-for="EnginePowerHp" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="EngineType" class="form-label"></label>
+            <select asp-for="EngineType" class="form-select" asp-items="Html.GetEnumSelectList<Aliyar.Web.Models.EngineType>()"></select>
+            <span asp-validation-for="EngineType" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="Transmission" class="form-label"></label>
+            <select asp-for="Transmission" class="form-select" asp-items="Html.GetEnumSelectList<Aliyar.Web.Models.TransmissionType>()"></select>
+            <span asp-validation-for="Transmission" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="Drive" class="form-label"></label>
+            <select asp-for="Drive" class="form-select" asp-items="Html.GetEnumSelectList<Aliyar.Web.Models.CarDriveType>()"></select>
+            <span asp-validation-for="Drive" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="FuelConsumptionL100Km" class="form-label"></label>
+            <input asp-for="FuelConsumptionL100Km" class="form-control" type="number" step="0.1" min="0" />
+            <span asp-validation-for="FuelConsumptionL100Km" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="EmissionClass" class="form-label"></label>
+            <input asp-for="EmissionClass" class="form-control" placeholder="Euro-5" />
+            <span asp-validation-for="EmissionClass" class="text-danger"></span>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Безопасность и комфорт</h2>
+    <div class="row g-2">
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasAbs" class="form-check-input" /><label asp-for="HasAbs" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasEsp" class="form-check-input" /><label asp-for="HasEsp" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasAirbags" class="form-check-input" /><label asp-for="HasAirbags" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasAirConditioning" class="form-check-input" /><label asp-for="HasAirConditioning" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasClimateControl" class="form-check-input" /><label asp-for="HasClimateControl" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasBluetooth" class="form-check-input" /><label asp-for="HasBluetooth" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasUsb" class="form-check-input" /><label asp-for="HasUsb" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasNavigation" class="form-check-input" /><label asp-for="HasNavigation" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasParkingSensors" class="form-check-input" /><label asp-for="HasParkingSensors" class="form-check-label"></label></div></div>
+        <div class="col-12 col-md-4"><div class="form-check"><input asp-for="HasRearCamera" class="form-check-input" /><label asp-for="HasRearCamera" class="form-check-label"></label></div></div>
+    </div>
+</div>
+
+<div class="mb-0">
+    <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Дополнительно</h2>
+    <div class="row g-3">
+        <div class="col-12">
+            <label asp-for="Documents" class="form-label"></label>
+            <input asp-for="Documents" class="form-control" placeholder="ПТС, сервисная книжка" />
+            <span asp-validation-for="Documents" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="OwnerCount" class="form-label"></label>
+            <input asp-for="OwnerCount" class="form-control" type="number" min="1" max="20" />
+            <span asp-validation-for="OwnerCount" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Condition" class="form-label"></label>
+            <textarea asp-for="Condition" class="form-control" rows="3" placeholder="Аварийность, ремонт, замечания"></textarea>
+            <span asp-validation-for="Condition" class="text-danger"></span>
+        </div>
+    </div>
+</div>
