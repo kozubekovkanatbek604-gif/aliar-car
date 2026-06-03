@@ -1,5 +1,6 @@
 using Aliyar.Web.Data;
 using Aliyar.Web.Models;
+using Aliyar.Web.Pages.Cars.Specifications;
 using Aliyar.Web.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,8 +24,13 @@ public class CreateModel : PageModel, ICarFormModel
     [BindProperty]
     public CarInputModel Car { get; set; } = new() { Year = DateTime.UtcNow.Year };
 
+    [BindProperty]
+    public SpecificationInputModel Specification { get; set; } = new();
+
     public async Task<IActionResult> OnPostAsync()
     {
+        Specification.AddRequiredFieldErrors(ModelState, nameof(Specification));
+
         if (!ModelState.IsValid)
             return Page();
 
@@ -55,6 +61,11 @@ public class CreateModel : PageModel, ICarFormModel
         try
         {
             await _db.SaveChangesAsync();
+
+            var spec = new CarSpecification { CarId = entity.Id };
+            Specification.ApplyTo(spec);
+            _db.CarSpecifications.Add(spec);
+            await _db.SaveChangesAsync();
         }
         catch (DbUpdateException ex)
         {
@@ -63,6 +74,7 @@ public class CreateModel : PageModel, ICarFormModel
             return Page();
         }
 
+        TempData["StatusMessage"] = "Автомобиль добавлен в каталог.";
         return RedirectToPage("Details", new { id = entity.Id });
     }
 }

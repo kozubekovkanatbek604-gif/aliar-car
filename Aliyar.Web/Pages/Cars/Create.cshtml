@@ -2,6 +2,7 @@
 @model Aliyar.Web.Pages.Cars.CreateModel
 @{
     ViewData["Title"] = "Добавить авто";
+    ViewData["IsRequiredForClient"] = true;
 }
 
 <header class="page-header">
@@ -13,7 +14,11 @@
 
 <form method="post" class="card">
     <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
         <partial name="_CarForm" model="Model" />
+        <hr class="my-4" />
+        <h2 class="h6 text-uppercase text-muted mb-3" style="letter-spacing: 0.04em; font-size: 0.75rem;">Технические характеристики</h2>
+        <partial name="/Pages/Cars/Specifications/_SpecificationForm.cshtml" model="Model.Specification" />
     </div>
     <div class="card-footer d-flex gap-2">
         <button class="btn btn-primary" type="submit">Сохранить</button>

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Aliyar.Web.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Aliyar.Web.Pages.Cars.Specifications;
 
@@ -115,6 +116,43 @@ public sealed class SpecificationInputModel
         OwnerCount = entity.OwnerCount,
         Condition = entity.Condition,
     };
+
+    public bool HasRequiredFields() =>
+        BodyTypeCatalog.IsSelectable(BodyType)
+        && Mileage >= 0
+        && !string.IsNullOrWhiteSpace(Color)
+        && EngineVolumeLiters is > 0
+        && EnginePowerHp is > 0
+        && EngineType != EngineType.Unknown
+        && Transmission != TransmissionType.Unknown
+        && Drive != CarDriveType.Unknown;
+
+    public void AddRequiredFieldErrors(ModelStateDictionary modelState, string prefix)
+    {
+        if (!BodyTypeCatalog.IsSelectable(BodyType))
+            modelState.AddModelError($"{prefix}.{nameof(BodyType)}", "Укажите тип кузова.");
+
+        if (Mileage < 0)
+            modelState.AddModelError($"{prefix}.{nameof(Mileage)}", "Укажите пробег.");
+
+        if (string.IsNullOrWhiteSpace(Color))
+            modelState.AddModelError($"{prefix}.{nameof(Color)}", "Укажите цвет.");
+
+        if (EngineVolumeLiters is null or <= 0)
+            modelState.AddModelError($"{prefix}.{nameof(EngineVolumeLiters)}", "Укажите объём двигателя.");
+
+        if (EnginePowerHp is null or <= 0)
+            modelState.AddModelError($"{prefix}.{nameof(EnginePowerHp)}", "Укажите мощность двигателя.");
+
+        if (EngineType == EngineType.Unknown)
+            modelState.AddModelError($"{prefix}.{nameof(EngineType)}", "Укажите тип двигателя.");
+
+        if (Transmission == TransmissionType.Unknown)
+            modelState.AddModelError($"{prefix}.{nameof(Transmission)}", "Укажите коробку передач.");
+
+        if (Drive == CarDriveType.Unknown)
+            modelState.AddModelError($"{prefix}.{nameof(Drive)}", "Укажите привод.");
+    }
 
     public void ApplyTo(CarSpecification entity)
     {

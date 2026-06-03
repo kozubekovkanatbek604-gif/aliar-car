@@ -60,7 +60,7 @@ public class EditModel : PageModel
         IsRequiredForClient = RequiresClientValidation(car);
 
         if (IsRequiredForClient)
-            ValidateRequiredForClient();
+            Input.AddRequiredFieldErrors(ModelState, nameof(Input));
 
         if (!ModelState.IsValid)
             return Page();
@@ -79,33 +79,6 @@ public class EditModel : PageModel
 
     private bool RequiresClientValidation(Car car) =>
         car.IsCustomerListing() && car.IsOwnedBy(User);
-
-    private void ValidateRequiredForClient()
-    {
-        if (!BodyTypeCatalog.IsSelectable(Input.BodyType))
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.BodyType)}", "Укажите тип кузова.");
-
-        if (Input.Mileage < 0)
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Mileage)}", "Укажите пробег.");
-
-        if (string.IsNullOrWhiteSpace(Input.Color))
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Color)}", "Укажите цвет.");
-
-        if (Input.EngineVolumeLiters is null or <= 0)
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.EngineVolumeLiters)}", "Укажите объём двигателя.");
-
-        if (Input.EnginePowerHp is null or <= 0)
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.EnginePowerHp)}", "Укажите мощность двигателя.");
-
-        if (Input.EngineType == EngineType.Unknown)
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.EngineType)}", "Укажите тип двигателя.");
-
-        if (Input.Transmission == TransmissionType.Unknown)
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Transmission)}", "Укажите коробку передач.");
-
-        if (Input.Drive == CarDriveType.Unknown)
-            ModelState.AddModelError($"{nameof(Input)}.{nameof(Input.Drive)}", "Укажите привод.");
-    }
 
     private async Task<Car?> LoadCarAsync() =>
         await _db.Cars.AsNoTracking()
