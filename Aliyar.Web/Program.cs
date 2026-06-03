@@ -5,15 +5,34 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
+if (args.Contains("--db-migrate", StringComparer.OrdinalIgnoreCase))
+{
+    try
+    {
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false)
+            .AddJsonFile($"appsettings.{env}.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        var cs = DatabaseConnection.Resolve(config);
+        await DbMigrationRunner.ApplyPendingMigrationsAsync(cs);
+        Console.WriteLine("Release migration completed successfully.");
+        Environment.Exit(0);
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine("Release migration failed. Set Fly secret ConnectionStrings__Default to your PostgreSQL (Neon/Supabase/etc.):");
+        Console.Error.WriteLine(ex);
+        Environment.Exit(1);
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = DatabaseConnection.Resolve(builder.Configuration);
-
-if (args.Contains("--db-migrate", StringComparer.OrdinalIgnoreCase))
-{
-    await DbMigrationRunner.ApplyPendingMigrationsAsync(connectionString);
-    return;
-}
 
 // Add services to the container.
 builder.Services.AddRazorPages();

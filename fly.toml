@@ -5,9 +5,6 @@ primary_region = "ams"
 [build]
   dockerfile = "Dockerfile"
 
-[deploy]
-  release_command = "dotnet /app/Aliyar.Web.dll --db-migrate"
-
 [env]
   ASPNETCORE_ENVIRONMENT = "Production"
   ASPNETCORE_URLS = "http://0.0.0.0:8080"
