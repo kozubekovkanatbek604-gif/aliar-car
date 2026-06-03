@@ -2,6 +2,7 @@
 set -e
 
 mkdir -p /data/uploads/cars /data/uploads/managers
+chmod -R 755 /data/uploads
 
 if [ -d /app/wwwroot/uploads ] && [ ! -L /app/wwwroot/uploads ]; then
   rm -rf /app/wwwroot/uploads

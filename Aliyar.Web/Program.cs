@@ -1,8 +1,10 @@
 using Aliyar.Web.Data;
 using Aliyar.Web.Security;
 using Aliyar.Web.Services;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -51,6 +53,16 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromHours(8);
 });
 builder.Services.AddScoped<CartService>();
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52_428_800; // 50 MB — запас для нескольких фото по 5 MB
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 52_428_800;
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -118,6 +130,9 @@ app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Загруженные в runtime файлы (uploads/*) не входят в MapStaticAssets — отдаём через wwwroot.
+app.UseStaticFiles();
 
 app.MapStaticAssets();
 app.MapRazorPages()

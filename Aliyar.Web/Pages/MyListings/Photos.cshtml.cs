@@ -94,7 +94,18 @@ public sealed class PhotosModel : PageModel
                 continue;
             }
 
-            var path = await _photos.SaveAsync(car.Id, file);
+            string path;
+            try
+            {
+                path = await _photos.SaveAsync(car.Id, file);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                ModelState.AddModelError(nameof(NewPhotos), $"Не удалось сохранить «{file.FileName}» на сервер.");
+                continue;
+            }
+
             maxSort++;
             _db.CarPhotos.Add(new CarPhoto
             {
