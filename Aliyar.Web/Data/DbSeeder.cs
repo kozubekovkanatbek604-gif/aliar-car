@@ -14,9 +14,6 @@ public static class DbSeeder
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-        await DbMigrationRunner.ApplyPendingMigrationsAsync(db.Database.GetConnectionString()
-            ?? throw new InvalidOperationException("DbContext has no connection string."));
-
         await EnsureRoleAsync(roleManager, AppRoles.Admin);
         await EnsureRoleAsync(roleManager, AppRoles.Manager);
         await EnsureRoleAsync(roleManager, AppRoles.Customer);

@@ -1,6 +1,7 @@
 using Aliyar.Web.Data;
 using Aliyar.Web.Security;
 using Aliyar.Web.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -33,6 +34,9 @@ if (args.Contains("--db-migrate", StringComparer.OrdinalIgnoreCase))
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = DatabaseConnection.Resolve(builder.Configuration);
+
+Console.WriteLine("Applying database migrations...");
+await DbMigrationRunner.ApplyPendingMigrationsAsync(connectionString);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -68,6 +72,11 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AppPolicies.CarManagement, policy =>
@@ -92,12 +101,15 @@ catch (Exception ex)
 }
 
 // Configure the HTTP request pipeline.
+app.UseForwardedHeaders();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    app.UseHttpsRedirection();
+    // Fly уже отдаёт HTTPS снаружи; редирект ломает внутренние health checks по HTTP :8080.
+    if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FLY_APP_NAME")))
+        app.UseHttpsRedirection();
 }
 
 app.UseRouting();
